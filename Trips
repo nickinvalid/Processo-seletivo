@@ -1,0 +1,58 @@
+create database raccoon;
+use raccoon;
+
+create table trips (
+    vendor_id varchar(50),
+    pickup_datetime timestamp,
+    dropoff_datetime timestamp,
+    passenger_count int,
+    payment_type varchar(50),
+    tolls_amount float,
+    total_amount float
+    );
+    
+INSERT INTO trips (vendor_id, pickup_datetime, dropoff_datetime, passenger_count, payment_type, tolls_amount,total_amount) values 
+('cmt', '2015-04-11 19:04:00','2015-04-11 19:44:00',5,'csh',2,2),
+('dds', '2015-04-11 14:04:00','2015-04-11 14:34:00',6,'csh',3,4),
+('vts', '2015-04-11 21:04:00','2015-04-11 21:04:00',4,'dis',7,14),
+('dds', '2015-04-11 22:04:00','2015-04-11 22:04:00',8,'CRD',4,4),
+('cmt', '2015-04-11 23:04:00','2015-04-11 23:04:00',5,'unk',0,0),
+('vts', '2010-03-23 16:04:00','2010-03-23 16:20:00',1,'CRD',2,5),
+('vts', '2011-03-20 16:04:00','2011-03-20 16:21:00',1,'CRD',1,1),
+('cmt', '2012-05-13 16:04:00','2012-05-13 16:04:00',2,'csh',2,3),
+('vts','2013-02-24 17:44:00','2013-02-24 17:44:00',3,'noc',0,0),
+('dds', '2014-01-25 18:24:00','2014-01-25 18:24:00',4,'dis',1,4),
+('vts', '2016-06-26 11:14:00','2016-06-26 11:14:00',7,'unk',5,5),
+('cmt', '2017-07-27 20:15:00','2017-07-27 20:15:00',3,'noc',0,0),
+('dds', '2016-04-11 21:04:00','2018-08-28 21:04:00',4,'dis',7,14),
+('vts', '2021-04-11 22:04:00','2019-09-29 22:04:00',8,'CRD',4,4),
+('dds', '2020-10-8 23:04:00','2020-10-8 23:04:00',5,'CRD',1,5);
+
+INSERT INTO trips (vendor_id, pickup_datetime, dropoff_datetime, passenger_count, payment_type, tolls_amount,total_amount) values 
+('vts', '2010-03-23 16:04:00','2010-03-23 16:20:00',1,'CRD',2,5);
+
+select payment_type TipoPagamento, sum(total_amount) ValorTotal from trips 
+where date(dropoff_datetime) = '2015-04-11'
+group by TipoPagamento;
+
+select count(pickup_datetime) NumeroCorridas, passenger_count NumeroPassageiros from trips 
+where passenger_count between 1 and 5
+group by NumeroPassageiros;
+
+select round(avg(tolls_amount),2) ValorMedioPedagio from trips 
+where tolls_amount is not null and tolls_amount > 0;
+
+select hour(pickup_datetime) Horas, count(hour(pickup_datetime)) cont from trips
+group by Horas 
+order by count(hour(pickup_datetime)) desc
+limit 1;
+
+select hour(pickup_datetime) HoraMaisCorrida from trips
+group by hour(pickup_datetime) 
+having count(hour(pickup_datetime)) = (select count(hour(pickup_datetime)) cont from trips
+group by hour(pickup_datetime) 
+order by cont desc
+limit 1);
+
+
+
